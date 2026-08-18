@@ -183,14 +183,23 @@ def scan():
         except Exception as e:
             print(f"[{symbol}] error: {e}")
 
+        
+
+
 def worker():
     while True:
         scan()
         time.sleep(CHECK_SECONDS)
 
+
 @app.get("/")
 def home():
-    return jsonify({
+   return jsonify({ 
+    
+    
+
+
+    
         "status": "running",
         "mode": MODE,
         "symbols": SYMBOLS,
