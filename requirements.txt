@@ -1,0 +1,4 @@
+flask>=3.0,<4
+requests>=2.31,<3
+pandas>=2.0,<3
+gunicorn>=21,<24
