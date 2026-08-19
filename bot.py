@@ -169,6 +169,7 @@ def scan():
         print(f"[SCAN] Revisando {symbol}")
         try:
             df = get_klines(symbol)
+            print(f"[SCAN] Datos recibidos {symbol}")
             s = make_signal(df, symbol)
 
             if not s:
