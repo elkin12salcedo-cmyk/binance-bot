@@ -166,20 +166,25 @@ def format_signal(s):
 
 def scan():
     for symbol in SYMBOLS:
+        print(f"[SCAN] Revisando {symbol}")
         try:
             df = get_klines(symbol)
             s = make_signal(df, symbol)
+
             if not s:
                 continue
 
             key = f"{symbol}:{s['candle_time']}:{s['signal']}"
+
             if last_signal.get(symbol) == key:
                 continue
 
             last_signal[symbol] = key
+
             message = format_signal(s)
             print(message)
             send_telegram(message)
+
         except Exception as e:
             print(f"[{symbol}] error: {e}")
 
