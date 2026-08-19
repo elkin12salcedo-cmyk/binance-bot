@@ -27,7 +27,7 @@ def get_klines(symbol):
     else:
         url = BINANCE_URL + endpoint
 
-   r = requests.get(url, params={"symbol": symbol, "interval": INTERVAL, "limit": 150}, timeout=10)
+    r = requests.get(url, params={"symbol": symbol, "interval": INTERVAL, "limit": 150}, timeout=10)
     r.raise_for_status()
     data = r.json()
     return pd.DataFrame(data, columns=[
