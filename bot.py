@@ -11,8 +11,8 @@ BINANCE_URL = "https://api.binance.com"
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 MODE = os.getenv("MODE", "futures").strip().lower()
-SYMBOLS = [s.strip().upper() for s in os.getenv("SYMBOLS", "BTCUSDT,ETHUSDT").split(",") if s.strip()]
-INTERVAL = os.getenv("INTERVAL", "15m").strip()
+SYMBOLS = ["BTCUSDT"]
+INTERVAL = "1m"
 CHECK_SECONDS = int(os.getenv("CHECK_SECONDS", "60"))
 
 app = Flask(__name__)
