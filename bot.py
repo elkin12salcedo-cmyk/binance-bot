@@ -19,21 +19,41 @@ app = Flask(__name__)
 last_signal = {}
 
 def get_klines(symbol):
-    # Public market data: no Binance API key is needed.
-    endpoint = "/api/v3/klines"
-    if MODE == "futures":
-        endpoint = "/fapi/v1/klines"
-        url = "https://fapi.binance.com" + endpoint
-    else:
-        url = BINANCE_URL + endpoint
+    print(f"[BINANCE] Consultando {symbol}...", flush=True)
 
-    r = requests.get(url, params={"symbol": symbol, "interval": INTERVAL, "limit": 150}, timeout=10)
-    r.raise_for_status()
-    data = r.json()
-    return pd.DataFrame(data, columns=[
-        "open_time","open","high","low","close","volume",
-        "close_time","quote_volume","trades","taker_base","taker_quote","ignore"
-    ])
+    if MODE == "futures":
+        url = "https://fapi.binance.com/fapi/v1/klines"
+    else:
+        url = "https://api.binance.com/api/v3/klines"
+
+    try:
+        r = requests.get(
+            url,
+            params={
+                "symbol": symbol,
+                "interval": INTERVAL,
+                "limit": 150
+            },
+            timeout=15
+        )
+
+        print(f"[BINANCE] Respuesta HTTP: {r.status_code}", flush=True)
+
+        r.raise_for_status()
+
+        data = r.json()
+
+        print(f"[BINANCE] Velas recibidas: {len(data)}", flush=True)
+
+        return pd.DataFrame(data, columns=[
+            "open_time","open","high","low","close","volume",
+            "close_time","quote_volume","trades",
+            "taker_base","taker_quote","ignore"
+        ])
+
+    except Exception as e:
+        print(f"[BINANCE] ERROR: {type(e).__name__}: {e}", flush=True)
+        raise
 
 def indicators(df):
     close = pd.to_numeric(df["close"])
