@@ -21,19 +21,19 @@ last_signal = {}
 def get_klines(symbol):
     print(f"[MERCADO] Consultando {symbol}...", flush=True)
 
-    # Coinbase usa BTC-USD en lugar de BTCUSDT
     product = "BTC-USD"
-
     url = f"https://api.exchange.coinbase.com/products/{product}/candles"
 
     try:
+        end = int(datetime.now(timezone.utc).timestamp())
+        start = end - (150 * 60)
+
         r = requests.get(
             url,
             params={
-             "granularity": 60,
-    "limit": 150
-    
-    
+                "granularity": 60,
+                "start": start,
+                "end": end
             },
             timeout=15
         )
@@ -45,9 +45,6 @@ def get_klines(symbol):
         data = r.json()
 
         print(f"[MERCADO] Velas recibidas: {len(data)}", flush=True)
-
-        # Coinbase devuelve:
-        # [timestamp, low, high, open, close, volume]
 
         data = sorted(data, key=lambda x: x[0])
 
@@ -78,7 +75,7 @@ def get_klines(symbol):
     except Exception as e:
         print(f"[MERCADO] ERROR: {type(e).__name__}: {e}", flush=True)
         raise
-
+        
 def indicators(df):
     close = pd.to_numeric(df["close"])
     volume = pd.to_numeric(df["volume"])
