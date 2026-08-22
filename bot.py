@@ -19,40 +19,61 @@ app = Flask(__name__)
 last_signal = {}
 
 def get_klines(symbol):
-    print(f"[BINANCE] Consultando {symbol}...", flush=True)
+    print(f"[MERCADO] Consultando {symbol}...", flush=True)
 
-    if MODE == "futures":
-        url = "https://data-api.binance.vision/api/v3/klines"
-    else:
-        url = "https://api.binance.com/api/v3/klines"
+    # Coinbase usa BTC-USD en lugar de BTCUSDT
+    product = "BTC-USD"
+
+    url = f"https://api.exchange.coinbase.com/products/{product}/candles"
 
     try:
         r = requests.get(
             url,
             params={
-                "symbol": symbol,
-                "interval": INTERVAL,
-                "limit": 150
+                "granularity": 60
             },
             timeout=15
         )
 
-        print(f"[BINANCE] Respuesta HTTP: {r.status_code}", flush=True)
+        print(f"[MERCADO] Respuesta HTTP: {r.status_code}", flush=True)
 
         r.raise_for_status()
 
         data = r.json()
 
-        print(f"[BINANCE] Velas recibidas: {len(data)}", flush=True)
+        print(f"[MERCADO] Velas recibidas: {len(data)}", flush=True)
 
-        return pd.DataFrame(data, columns=[
+        # Coinbase devuelve:
+        # [timestamp, low, high, open, close, volume]
+
+        data = sorted(data, key=lambda x: x[0])
+
+        rows = []
+
+        for candle in data[-150:]:
+            rows.append([
+                candle[0] * 1000,
+                candle[3],
+                candle[2],
+                candle[1],
+                candle[4],
+                candle[5],
+                candle[0] * 1000 + 59999,
+                0,
+                0,
+                0,
+                0,
+                0
+            ])
+
+        return pd.DataFrame(rows, columns=[
             "open_time","open","high","low","close","volume",
             "close_time","quote_volume","trades",
             "taker_base","taker_quote","ignore"
         ])
 
     except Exception as e:
-        print(f"[BINANCE] ERROR: {type(e).__name__}: {e}", flush=True)
+        print(f"[MERCADO] ERROR: {type(e).__name__}: {e}", flush=True)
         raise
 
 def indicators(df):
