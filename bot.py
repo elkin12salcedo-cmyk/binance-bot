@@ -22,7 +22,7 @@ def get_klines(symbol):
     print(f"[BINANCE] Consultando {symbol}...", flush=True)
 
     if MODE == "futures":
-        url = "https://api.binance.com/api/v3/klines"
+        url = "https://data-api.binance.vision/api/v3/klines"
     else:
         url = "https://api.binance.com/api/v3/klines"
 
