@@ -30,7 +30,10 @@ def get_klines(symbol):
         r = requests.get(
             url,
             params={
-                "granularity": 60
+             "granularity": 60,
+    "limit": 150
+    
+    
             },
             timeout=15
         )
